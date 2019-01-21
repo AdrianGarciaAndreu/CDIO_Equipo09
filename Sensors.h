@@ -75,7 +75,7 @@ int lastCounter = 0; //última cuenta de interrupción mostrada por pantalla.
 #define PRINT_DEBUG_MESSAGES
 //#define PRINT_HTTP_RESPONSE
 
-#define WiFi_CONNECTION_UPV
+#define WiFi_CONNECTION_UPV //comentar en caso de no usar la red de la UPV
 
 
 // Selecciona que servidor REST quieres utilizar entre ThingSpeak y Dweet
@@ -94,9 +94,9 @@ int lastCounter = 0; //última cuenta de interrupción mostrada por pantalla.
 
 #else //Conexion fuera de la UPV
 
-  const char WiFiSSID[] = "vodafoneA350";
+  const char WiFiSSID[] = ""; //nombre de la red de conexión
 
-  const char WiFiPSK[] = "Krujo000";
+  const char WiFiPSK[] = ""; //contraseña de la red de conexion
 
 #endif
 
@@ -153,9 +153,6 @@ WiFiClient client; //Instancia de conexión WiFi
   String MyWriteAPIKey="PruebaGTI"; // Escribe la clave de tu canal Dweet
 
 #endif
-
-
-
 
 
 
@@ -341,7 +338,6 @@ void Initialization(){
   //Se inicia la comunicación con el sensor de presión BMP 180
 
    if(pr_bmp180.begin()){}
-
    else{Serial.println("Error al iniciar el BMP180");}
 
 
@@ -386,7 +382,7 @@ void Initialization(){
 
 
 
- //connectWiFi(); //Inicia conexión WiFi.
+ connectWiFi(); //Inicia conexión WiFi.
 
 
 
@@ -827,7 +823,7 @@ int HumitySensor::readHR(){
       }
 
 
-
+  //Serial.print("HR tmp: "); Serial.println(readingHr);
   return resultHr;
 
 }
@@ -877,7 +873,8 @@ double PressureSensor::readPressure(){
  char status;
 
  double T,P;
-
+ T=0.00;
+ P=0.00;
 
 
   // Empezamos a medir Temperatura
@@ -1032,6 +1029,7 @@ float TemperatureSensor::readAmbientTemp(){
 
     result = mapDecimal(reading,this->sensorMin, this->sensorMax, 0, 40);
 
+  //Serial.print("temp tmp: "); Serial.println(reading);
 
 
   return result;
@@ -1160,17 +1158,14 @@ String GPSensor::getLocation(){
 
 
 
-    resultGPS = "Location: ";
-
-    resultGPS = resultGPS + gpsDate;
-
-    resultGPS = resultGPS + ", ";
-
-    resultGPS = resultGPS + gpsTime + ", ";
-
-    resultGPS = resultGPS + gps.location.lat() + " lat, " +gps.location.lng()+ " lang";
-
+    //resultGPS = "Location: ";
+    //resultGPS = resultGPS + gpsDate;
+    //resultGPS = resultGPS + ", ";
+    //resultGPS = resultGPS + gpsTime + ", ";
+    //resultGPS = resultGPS + gps.location.lat() + " lat, " +gps.location.lng()+ " lang";
     
+    resultGPS = "";
+    resultGPS = resultGPS + gps.location.lat()+";"+gps.location.lng();
 
   }
 
@@ -1178,8 +1173,7 @@ String GPSensor::getLocation(){
 
   {
 
-    resultGPS = ("Satelites GPS captados: ");
-
+    //resultGPS = ("Satelites GPS captados: ");
     resultGPS = resultGPS + (gps.satellites.value());
 
   }
@@ -1339,8 +1333,6 @@ String LuminitySensor::readLuminity(){
 
 
 
-
-
 /*
 
  * Funció para leer y mostrar datos de posicionamiento locales, acelerometro/giroscopio
@@ -1387,11 +1379,6 @@ int readPosition(){
    ay=ay*FS_ACC/32768;
 
    az=az*FS_ACC/32768;
-
-
-
- 
-
  
 
    // --- Mostrar valores ---
@@ -1412,7 +1399,6 @@ int readPosition(){
 
   */
 
-  
 
   //movimientos considerados intencionados (desplazamiento forzoso del dispositivo)
 
@@ -1424,7 +1410,6 @@ int readPosition(){
 
     }
   */
-   
 
   return result;
 
