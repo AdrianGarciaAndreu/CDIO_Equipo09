@@ -1,2 +1,2 @@
-# CDIO_Equipo09
-Desarrollo de un proyecto basado en metodología CDIO
+# CDIO_Equipo09_18
+Desarrollo de un proyecto electrónico basado en metodología CDIO
