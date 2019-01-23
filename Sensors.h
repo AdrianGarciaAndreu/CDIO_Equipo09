@@ -1214,7 +1214,7 @@ class LuminitySensor{
 
     void setMinMax(int,int); //establece minimo/maximo a contemplar
 
-    String readLuminity(); //Obtiene una medida de la iluminación relativa
+    int readLuminity(); //Obtiene una medida de la iluminación relativa
 
 }; 
 
@@ -1237,8 +1237,8 @@ LuminitySensor::LuminitySensor(int pin_in){
   //this->sensorMin = 100; //Valor por defecto del sensor en oscuridad (tapado)
   //this->sensorMax = 30000; //Valor por defecto del sensor a plena luz de un día soleado
 
-  this->sensorMin = 2390; //Valor por defecto del sensor en oscuridad (tapado)
-  this->sensorMax = 4850; //Valor por defecto del sensor a plena luz de un día soleado
+  this->sensorMin = 0; //Valor por defecto del sensor en oscuridad (tapado)
+  this->sensorMax = 25000; //Valor por defecto del sensor a plena luz de un día soleado
 
 }
 
@@ -1266,7 +1266,7 @@ void LuminitySensor::setMinMax(int minimum, int maximum){
 
  */
 
-String LuminitySensor::readLuminity(){
+int LuminitySensor::readLuminity(){
 
   int readingLu, resultLu;
 
@@ -1321,7 +1321,7 @@ String LuminitySensor::readLuminity(){
 
 
 
-  return resultLuToSend;
+  return resultLu;
 
 }
 

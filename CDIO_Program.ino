@@ -1,20 +1,20 @@
 #include "Sensors.h"
 
-#define DATOS_A_ENVIAR 7 //Numero de medidas a enviar al servidor REST (Entre 1 y 8)
+#define DATOS_A_ENVIAR 8 //Numero de medidas a enviar al servidor REST (Entre 1 y 8)
 
 
 SalinitySensor ss(5,1); //Sensor de salinidad, pin 5 = salida, pin 0 = entrada
 HumitySensor hr(0); //Sensor de humeddad relativa, pin 1 = entrda analogica
 TemperatureSensor tr(2); //Sensor de temperatura, pin 2 = entrada anlogica
 PressureSensor pr; //Sensor de presión, SDA = entrada digital, SCL = señal de reloj.
-//LuminitySensor Ls(3);
+LuminitySensor Ls(3);
 
 //Sensor GPS, y posición por defecto 0,0 hasta que no conecte con NEMA
 GPSensor gps; 
 String gpsLat = "0.00000" ,gpsLong = "0.00000";
 
 //Variables de resultados que visualizar o enviar al servidor
-String finalHR, finalSalinity, finalAmbientTemp, finalPressure, finalMovement, finalLat, finalLong;
+String finalHR, finalSalinity, finalAmbientTemp, finalPressure, finalMovement, finalLight, finalLat, finalLong;
 
 
 
@@ -25,6 +25,7 @@ void processData(){
   finalSalinity = ss.readSalinity();
   finalAmbientTemp = tr.readAmbientTemp();
   finalPressure = pr.readPressure();
+  finalLight = Ls.readLuminity();
   int res = readPosition();
   finalMovement = "0";
    if(res>lastCounter){
@@ -70,6 +71,8 @@ void loop() {
     datos[5] = String(finalMovement); //Se envía el dato de detección de movimiento
     datos[6] = String(finalLat); //Se envía el dato de latitud en función del GPS
     datos[7] = String(finalLong); //Se envía el dato de longitud en función del GPS
+    datos[8] = String(finalLight); //Se envía el dato de iluminación.
+    
     
     //HTTPPost( datos, DATOS_A_ENVIAR );
     HTTPGet( datos, DATOS_A_ENVIAR ); //Se envían los datos vía GET.
@@ -86,7 +89,7 @@ void loop() {
    Serial.print("Salinity: "); Serial.print(finalSalinity); Serial.println("%");
    Serial.print("Temp: ");  Serial.print(finalAmbientTemp); Serial.println("ºC");
    Serial.print("Pressure: "); Serial.print(finalPressure); Serial.println("mb");
-   //Serial.print("Iluminacion: "+Ls.readLuminity());  
+   Serial.print("Iluminacion: "+finalLight);  
    Serial.println("");
    Serial.print("Localización --> lat:"+finalLat+", lang:"+finalLong); Serial.println("");
    Serial.print("Movimiento: "+finalMovement); Serial.println("");
