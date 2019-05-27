@@ -73,15 +73,17 @@ int lastCounter = 0; //última cuenta de interrupción mostrada por pantalla.
 
 // Comentar/Descomentar para ver mensajes de depuracion en monitor serie y/o respuesta del HTTP server
 #define PRINT_DEBUG_MESSAGES
-//#define PRINT_HTTP_RESPONSE
+#define PRINT_HTTP_RESPONSE
 
-#define WiFi_CONNECTION_UPV //comentar en caso de no usar la red de la UPV
+
+//#define WiFi_CONNECTION_UPV //comentar en caso de no usar la red de la UPV
 
 
 // Selecciona que servidor REST quieres utilizar entre ThingSpeak y Dweet
-#define REST_SERVER_THINGSPEAK //Selecciona tu canal para ver los datos en la web (https://thingspeak.com/channels/360979)
+//#define REST_SERVER_THINGSPEAK //Selecciona tu canal para ver los datos en la web (https://thingspeak.com/channels/360979)
 //#define REST_SERVER_DWEET //Selecciona tu canal para ver los datos en la web (http://dweet.io/follow/PruebaGTI)
 
+#define REST_DEV_TEAM08 //Conectamos con nuestro ordenador
 
 
 //Conexion
@@ -94,9 +96,9 @@ int lastCounter = 0; //última cuenta de interrupción mostrada por pantalla.
 
 #else //Conexion fuera de la UPV
 
-  const char WiFiSSID[] = ""; //nombre de la red de conexión
-
-  const char WiFiPSK[] = ""; //contraseña de la red de conexion
+  const char WiFiSSID[] = "Redmi-Adrian"; //nombre de la red de conexión
+ 
+  const char WiFiPSK[] = "carnefresca"; //contraseña de la red de conexion
 
 #endif
 
@@ -113,6 +115,13 @@ int lastCounter = 0; //última cuenta de interrupción mostrada por pantalla.
 #elif defined(REST_SERVER_THINGSPEAK) //Conexion fuera de la UPV
 
   const char Server_Host[] = "api.thingspeak.com";
+
+  const int Server_HttpPort = 80;
+
+#elif defined(REST_DEV_TEAM08) //Conexion de desarrollo para la asignatura de Proyecto Web
+
+  //const IPAddress Server_Host(192,168,0,155);
+    const char Server_Host[] = "adgaran1.upv.edu.es";
 
   const int Server_HttpPort = 80;
 
@@ -146,6 +155,10 @@ WiFiClient client; //Instancia de conexión WiFi
 
   String MyWriteAPIKey="5ZKIZ5IY6YOY7M0T"; // Escribe la clave de tu canal ThingSpeak
 
+#elif defined(REST_DEV_TEAM08)
+  const char Rest_Host[] = "adgaran1.upv.edu.es/api/v4.0/medidas";
+  String MyWriteAPIKey="";
+  
 #else 
 
   const char Rest_Host[] = "dweet.io";
@@ -282,7 +295,6 @@ void connectWiFi()
   {
 
     #ifdef PRINT_DEBUG_MESSAGES
-
        Serial.println(".");
 
     #endif
@@ -408,8 +420,6 @@ double mapDecimal(double x, double in_min, double in_max, double out_min, double
 
 
 
-
-
 /*
 
  * Función para enviar datos vía HTTP POST al servidor. 
@@ -418,29 +428,32 @@ double mapDecimal(double x, double in_min, double in_max, double out_min, double
 
 void HTTPPost(String fieldData[], int numFields){
 
+        Serial.println("HOST: "+String(Server_Host));
+        Serial.println("PORT: "+String(Server_HttpPort));
     
+    int tmpConn = client.connect( Server_Host , Server_HttpPort );
+    if (tmpConn){
 
-    if (client.connect( Server_Host , Server_HttpPort )){
-
-        
 
         //Se construye la cadena de caracteres a enviar como parámetros.   
 
         
 
-        String PostData= "api_key=" + MyWriteAPIKey ;
+       // String PostData= "api_key=" + MyWriteAPIKey ;
+        String PostData= "" ;
 
         for ( int field = 1; field < (numFields + 1); field++ ){
 
-            PostData += "&field" + String( field ) + "=" + fieldData[ field ];
+            PostData += String( field ) + "=" + fieldData[ field ] + "&";
 
         }     
 
+            PostData.remove(PostData.length()-1);
         
 
         // POST data via HTTP
 
-        client.println( "POST http://" + String(Rest_Host) + "/update HTTP/1.1" );
+        client.println( "POST http://" + String(Rest_Host) + " HTTP/1.1" );
 
         client.println( "Host: " + String(Rest_Host) );
 
@@ -476,7 +489,12 @@ void HTTPPost(String fieldData[], int numFields){
 
             #endif
 
-    }
+    } else{
+      
+        Serial.println("Problema en la conexion con el HOST");
+        Serial.println(tmpConn);
+        
+      }
 
 }
 

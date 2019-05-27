@@ -1,6 +1,7 @@
 #include "Sensors.h"
 
-#define DATOS_A_ENVIAR 8 //Numero de medidas a enviar al servidor REST (Entre 1 y 8)
+#define DATOS_A_ENVIAR 9 //Numero de medidas a enviar al servidor REST (Entre 1 y 8)
+#define SensorSN 1 //Identificador del sensor;
 
 
 SalinitySensor ss(5,1); //Sensor de salinidad, pin 5 = salida, pin 0 = entrada
@@ -72,15 +73,18 @@ void loop() {
     datos[6] = String(finalLat); //Se envía el dato de latitud en función del GPS
     datos[7] = String(finalLong); //Se envía el dato de longitud en función del GPS
     datos[8] = String(finalLight); //Se envía el dato de iluminación.
+    //datos[8] = String(rand()%(100-0 + 1) + 0); //Se envía el dato de iluminación.
+    
+    datos[9] = String(SensorSN); //Numero de serie del sensor que envia los datos
     
     
-    //HTTPPost( datos, DATOS_A_ENVIAR );
-    HTTPGet( datos, DATOS_A_ENVIAR ); //Se envían los datos vía GET.
+    HTTPPost( datos, DATOS_A_ENVIAR );
+    //HTTPGet( datos, DATOS_A_ENVIAR ); //Se envían los datos vía GET.
 
    delay(5000);
    
    Serial.println("ESP8266 dormido...");
-   ESP.deepSleep(1200 * 1000000); 
+   ESP.deepSleep(5 * 1000000); 
 
   } else {
   //Se comprueba si el dispositivo está en movimiento
